@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy;
+package xyz.torquato.bookbuy.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,9 +7,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.util.ArrayList;
 
 import xyz.torquato.bookbuy.databinding.FragmentFirstBinding;
+import xyz.torquato.bookbuy.ui.content.BookItem;
+import xyz.torquato.bookbuy.ui.content.CustomAdapter;
 
 public class FirstFragment extends Fragment {
 
@@ -29,10 +33,12 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonFirst.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-        );
+        var dataSet = new ArrayList<BookItem>();
+        dataSet.add(new BookItem("Title","Author","Description"));
+        CustomAdapter adapter = new CustomAdapter(dataSet);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        binding.contentList.setLayoutManager(layoutManager);
+        binding.contentList.setAdapter(adapter);
     }
 
     @Override
