@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui;
+package xyz.torquato.bookbuy.ui.content.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.util.ArrayList;
 
 import xyz.torquato.bookbuy.databinding.FragmentFirstBinding;
-import xyz.torquato.bookbuy.ui.content.BookItem;
-import xyz.torquato.bookbuy.ui.content.CustomAdapter;
+import xyz.torquato.bookbuy.domain.BookItem;
+import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
 
 public class FirstFragment extends Fragment {
-
+    private final BookMenuViewModel viewModel = new BookMenuViewModel();
     private FragmentFirstBinding binding;
 
     @Override
@@ -24,17 +24,18 @@ public class FirstFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         var dataSet = new ArrayList<BookItem>();
-        dataSet.add(new BookItem("Title","Author","Description"));
+        viewModel.bookMenu.observe(getViewLifecycleOwner(), item -> {
+            dataSet.clear();
+            dataSet.addAll(item.content);
+        });
+
         CustomAdapter adapter = new CustomAdapter(dataSet);
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         binding.contentList.setLayoutManager(layoutManager);

@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui.content;
+package xyz.torquato.bookbuy.domain;
 
 public class BookItem {
     public String title;
