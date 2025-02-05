@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import xyz.torquato.bookbuy.data.BookRepository;
 import xyz.torquato.bookbuy.domain.GetContentUseCase;
 import xyz.torquato.bookbuy.ui.content.model.BookMenuUiState;
 
 public class BookMenuViewModel extends ViewModel {
 
-    private final GetContentUseCase useCase = new GetContentUseCase();
+    private final GetContentUseCase useCase = new GetContentUseCase(new BookRepository());
 
     private final MutableLiveData<BookMenuUiState> bookMenuUiStateLiveData = new MutableLiveData<>();
 
