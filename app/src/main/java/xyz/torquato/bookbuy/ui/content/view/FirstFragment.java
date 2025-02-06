@@ -11,12 +11,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import xyz.torquato.bookbuy.databinding.FragmentFirstBinding;
 import xyz.torquato.bookbuy.domain.BookItem;
 import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
 
+@AndroidEntryPoint
 public class FirstFragment extends Fragment {
-    private final BookMenuViewModel viewModel = new BookMenuViewModel();
+
+    @Inject
+    BookMenuViewModel viewModel;
+
     private FragmentFirstBinding binding;
 
     @Override

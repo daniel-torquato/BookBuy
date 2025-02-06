@@ -5,11 +5,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import xyz.torquato.bookbuy.domain.BookItem;
 
 public class BookRepository {
     public final MutableLiveData<List<BookItem>> example = new MutableLiveData<>();
 
+    @Inject
     public BookRepository() {
         example.setValue(List.of(
                 new BookItem("Title", "Author", "Description"),
