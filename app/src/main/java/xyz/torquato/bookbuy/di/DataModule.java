@@ -4,6 +4,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.components.FragmentComponent;
+import xyz.torquato.bookbuy.data.BookDataSource;
 import xyz.torquato.bookbuy.data.BookRepository;
 import xyz.torquato.bookbuy.domain.GetContentUseCase;
 import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
@@ -13,8 +14,15 @@ import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
 public class DataModule {
 
     @Provides
-    public static BookRepository providesBookRepository() {
-        return new BookRepository();
+    public static BookDataSource providesBookDataSource() {
+        return new BookDataSource();
+    }
+
+    @Provides
+    public static BookRepository providesBookRepository(
+            BookDataSource bookDataSource
+    ) {
+        return new BookRepository(bookDataSource);
     }
 
     @Provides
