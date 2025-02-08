@@ -5,9 +5,10 @@ import javax.inject.Inject;
 public class BookDataSource {
 
     @Inject
-    public BookDataSource() {}
+    public BookDataSource() {
+    }
 
-    public native void example();
+    public native String example();
 
     static {
         System.loadLibrary("booklib");

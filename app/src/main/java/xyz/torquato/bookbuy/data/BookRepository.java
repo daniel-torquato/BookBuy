@@ -14,9 +14,8 @@ public class BookRepository {
 
     @Inject
     public BookRepository(BookDataSource dataSource) {
-        dataSource.example();
         example.setValue(List.of(
-                new BookItem("Title", "Author", "Description"),
+                new BookItem(dataSource.example(), "Author", "Description"),
                 new BookItem("Title3", "AuthorX", "DescriptionZ")
         ));
     }
