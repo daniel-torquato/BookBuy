@@ -13,9 +13,9 @@ public class BookRepository {
     public final MutableLiveData<List<BookItem>> example = new MutableLiveData<>();
 
     @Inject
-    public BookRepository() {
+    public BookRepository(BookDataSource dataSource) {
         example.setValue(List.of(
-                new BookItem("Title", "Author", "Description"),
+                new BookItem(dataSource.example(), "Author", "Description"),
                 new BookItem("Title3", "AuthorX", "DescriptionZ")
         ));
     }
