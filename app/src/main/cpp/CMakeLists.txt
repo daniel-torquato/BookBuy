@@ -5,6 +5,12 @@ project("booklib")
 add_library(${PROJECT_NAME} SHARED
         main.cpp)
 
+
+find_package(openssl REQUIRED CONFIG)
+find_package(curl REQUIRED CONFIG)
+
+
 target_link_libraries(${PROJECT_NAME}
+        curl::curl
         android
         log)
