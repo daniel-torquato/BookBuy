@@ -2,7 +2,7 @@ package xyz.torquato.bookbuy.data;
 
 import javax.inject.Inject;
 
-import xyz.torquato.bookbuy.data.model.BookData;
+import xyz.torquato.bookbuy.data.model.BookList;
 
 public class BookDataSource {
 
@@ -11,7 +11,7 @@ public class BookDataSource {
 
     public native String example();
 
-    public native BookData getBooks();
+    public native BookList getBooks();
 
     static {
         System.loadLibrary("booklib");

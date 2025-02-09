@@ -28,14 +28,23 @@ public:
     std::string author;
     std::string description;
 
-    BookData() {}
+    BookData() = default;
 };
 
-jobject mapToBooList(JNIEnv *env,const Json::Value& items);
+
+jboolean appendItemToBookList(JNIEnv *env, jobject bookList, jobject data);
+
+jboolean appendItemToArrayList(JNIEnv *env, jobject list, jobject data);
+
+jobject createEmptyBookList(JNIEnv *env);
+
+jobject mapToBookList(JNIEnv *env, const Json::Value &items);
+
 jobject createBookData(JNIEnv *env, const BookData &bookData);
-Json::Value queryBook(const std::string& query,int maxResults,int startIndex);
-jobject stringToJString(JNIEnv* env, const std::string& str);
-void parse_json(const std::string &rawJson);
+
+Json::Value queryBook(const std::string &query, int maxResults, int startIndex);
+
+jobject stringToJString(JNIEnv *env, const std::string &str);
 
 extern "C"
 JNIEXPORT jstring JNICALL
@@ -47,29 +56,6 @@ jni_prefix(example)(JNIEnv *env, jobject) {
 
 }
 
-void parse_json(const std::string &rawJson) {
-    Json::Value root;
-
-    Json::Reader reader;
-    reader.parse(rawJson, root);
-
-    auto items = root["items"];
-    unsigned int length = items.size();
-
-    for (const auto &item: root["items"]) {
-        auto itemInfo = item["volumeInfo"];
-        __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG:TITLE", itemInfo["title"].asCString());
-        for (const auto &author: itemInfo["authors"]) {
-            __android_log_write(ANDROID_LOG_ERROR,
-                                "DEBUG:AUTH", author.asCString());
-        }
-        __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG:DESC", itemInfo.get("description", "empty").asCString());
-    }
-}
-
-
 extern "C"
 JNIEXPORT jobject JNICALL
 jni_prefix(getBooks)(JNIEnv *env, jobject ) {
@@ -77,17 +63,16 @@ jni_prefix(getBooks)(JNIEnv *env, jobject ) {
                         "DEBUG", "JNI call");
 
     Json::Value items = queryBook("ios", 20, 0);
-    jobject bookItem = mapToBooList(env, items);
+    jobject bookItem = mapToBookList(env, items);
     return bookItem;
 }
 
 jobject
-mapToBooList(
+mapToBookList(
         JNIEnv *env,
         const Json::Value& items
 ) {
-    jobject result;
-    int idx = 0;
+    jobject result = createEmptyBookList(env);
     for (const auto &item: items) {
         BookData bookData;
         auto itemInfo = item["volumeInfo"];
@@ -116,9 +101,11 @@ mapToBooList(
         } else {
             bookData.description = "Not Found";
         }
-        if (idx++ == 0) {
-            result = createBookData(env, bookData);
-        }
+
+       if (!appendItemToBookList(env, result, createBookData(env, bookData))) {
+           __android_log_write(ANDROID_LOG_ERROR,
+                               "DEBUG", "Could not add item");
+       }
     }
     return result;
 }
@@ -144,6 +131,50 @@ jobject createBookData(JNIEnv *env, const BookData &bookData) {
     env->SetObjectField(bookItem, descriptionId, newDescription);
 
     return bookItem;
+}
+
+jobject createEmptyBookList(JNIEnv *env) {
+    jclass clsBookList = env->FindClass("xyz/torquato/bookbuy/data/model/BookList");
+    jclass clsArrayList = env->FindClass("java/util/ArrayList");
+
+    jmethodID methodId = env->GetMethodID(clsBookList, "<init>", "()V");
+    jmethodID arrayListInitId = env->GetMethodID(clsArrayList, "<init>", "()V");
+
+    jobject bookList = env->NewObject(clsBookList, methodId);
+    jfieldID itemsId = env->GetFieldID(clsBookList, "items", "Ljava/util/ArrayList;");
+
+    jobject arrayList = env->NewObject(clsArrayList, arrayListInitId);
+
+    env->SetObjectField(bookList, itemsId, arrayList);
+
+    return bookList;
+}
+
+jboolean
+appendItemToBookList(
+        JNIEnv *env,
+        jobject bookList,
+        jobject data
+) {
+    jclass clsBookList = env->FindClass("xyz/torquato/bookbuy/data/model/BookList");
+
+    jfieldID itemsId = env->GetFieldID(clsBookList, "items", "Ljava/util/ArrayList;");
+    jobject bookItems = env->GetObjectField(bookList, itemsId);
+
+    return appendItemToArrayList(env, bookItems, data);
+}
+
+jboolean
+appendItemToArrayList(
+        JNIEnv *env,
+        jobject list,
+        jobject data
+) {
+    jclass clsArrayList = env->FindClass("java/util/ArrayList");
+
+    jmethodID addId = env->GetMethodID(clsArrayList, "add", "(Ljava/lang/Object;)Z");
+
+    return env->CallBooleanMethod(list, addId, data);
 }
 
 Json::Value
@@ -240,7 +271,7 @@ jobject stringToJString(JNIEnv* env, const std::string& str)
             env->DeleteLocalRef(byteArray);
         default:
             break;
-    };
+    }
 
     return result;
 }

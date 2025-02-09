@@ -5,6 +5,5 @@ import java.util.ArrayList;
 public class BookList {
 
     public ArrayList<BookData> items;
-
     public BookList() {}
 }
