@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 #include <curl/curl.h>
-
+#include <json/json.h>
 
 #define jni_prefix(func) Java_xyz_torquato_bookbuy_data_BookDataSource_ ## func
 
@@ -22,6 +22,8 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* use
     return realsize;
 }
 
+
+void parse_json(const std::string &rawJson);
 
 extern "C"
 JNIEXPORT jstring JNICALL
@@ -48,10 +50,33 @@ jni_prefix(example)(JNIEnv *env, jobject) {
         __android_log_write(ANDROID_LOG_ERROR,
                             "DEBUG", result.c_str());
 
+        parse_json(result);
 
         curl_easy_cleanup(curl);
     }
 
     return env->NewStringUTF("Example");
 
+}
+
+void parse_json(const std::string &rawJson) {
+    Json::Value root;
+
+    Json::Reader reader;
+    reader.parse(rawJson, root);
+
+    auto items = root["items"];
+    unsigned int length = items.size();
+
+    for (const auto &item: root["items"]) {
+        auto itemInfo = item["volumeInfo"];
+        __android_log_write(ANDROID_LOG_ERROR,
+                            "DEBUG:TITLE", itemInfo["title"].asCString());
+        for (const auto &author: itemInfo["authors"]) {
+            __android_log_write(ANDROID_LOG_ERROR,
+                                "DEBUG:AUTH", author.asCString());
+        }
+        __android_log_write(ANDROID_LOG_ERROR,
+                            "DEBUG:DESC", itemInfo.get("description", "empty").asCString());
+    }
 }
