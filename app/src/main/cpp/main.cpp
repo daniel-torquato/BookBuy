@@ -22,7 +22,7 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* use
     return realsize;
 }
 
-
+jobject stringToJString(JNIEnv* env, const std::string& str);
 void parse_json(const std::string &rawJson);
 
 extern "C"
@@ -79,4 +79,91 @@ void parse_json(const std::string &rawJson) {
         __android_log_write(ANDROID_LOG_ERROR,
                             "DEBUG:DESC", itemInfo.get("description", "empty").asCString());
     }
+}
+
+
+extern "C"
+JNIEXPORT jobject JNICALL
+jni_prefix(getBooks)(JNIEnv *env, jobject) {
+    __android_log_write(ANDROID_LOG_ERROR,
+                        "DEBUG", "JNI call");
+
+    jclass cls = env->FindClass("xyz/torquato/bookbuy/data/model/BookData");
+
+    jmethodID methodId = env->GetMethodID(cls, "<init>", "()V");
+    jfieldID titleId = env->GetFieldID(cls, "title", "Ljava/lang/String;");
+    jfieldID authorId = env->GetFieldID(cls, "author", "Ljava/lang/String;");
+    jfieldID descriptionId = env->GetFieldID(cls, "description", "Ljava/lang/String;");
+
+    jobject newTitle = stringToJString(env, "Native Title");
+    jobject newAuthor = stringToJString(env, "Native Author");
+    jobject newDescription = stringToJString(env, "Native Description");
+
+    jobject bookItem = env->NewObject(cls, methodId);
+
+    env->SetObjectField(bookItem, titleId, newTitle);
+    env->SetObjectField(bookItem, authorId, newAuthor);
+    env->SetObjectField(bookItem, descriptionId, newDescription);
+
+    return bookItem;
+
+}
+
+
+jobject stringToJString(JNIEnv* env, const std::string& str)
+{
+    int state = 0;
+    jstring encoding = nullptr;
+    jclass stringClass = nullptr;
+    jmethodID methodId = nullptr;
+    jobject result = nullptr;
+
+
+    auto longStr = std::vector<char>(str.length(), '\0');
+    copy(str.begin(), str.end(), longStr.begin());
+
+    auto byteArray = env->NewByteArray((jsize) str.length());
+    if (byteArray == nullptr)
+        state = -1;
+
+    if (state == 0)
+        env->SetByteArrayRegion(byteArray, 0, (jsize) str.length(),
+                                reinterpret_cast<jbyte *>(longStr.data()));
+
+    if (state == 0) {
+        encoding = env->NewStringUTF("UTF-8");
+        if (encoding == nullptr) {
+            state = 3;
+        }
+    }
+
+    if (state == 0) {
+        stringClass = env->FindClass("java/lang/String");
+        if (stringClass == nullptr)
+            state = 2;
+    }
+
+    if (state == 0) {
+        methodId = env->GetMethodID(stringClass, "<init>", "([BLjava/lang/String;)V");
+        if (methodId == nullptr)
+            state = 1;
+    }
+
+    if (state == 0) {
+        result = env->NewObject(stringClass, methodId, byteArray, encoding);
+    }
+
+    switch (state) {
+        case 0:
+        case 1:
+            env->DeleteLocalRef(stringClass);
+        case 2:
+            env->DeleteLocalRef(encoding);
+        case 3:
+            env->DeleteLocalRef(byteArray);
+        default:
+            break;
+    };
+
+    return result;
 }
