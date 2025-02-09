@@ -22,6 +22,18 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* use
     return realsize;
 }
 
+class BookData {
+public:
+    std::string title;
+    std::string author;
+    std::string description;
+
+    BookData() {}
+};
+
+jobject mapToBooList(JNIEnv *env,const Json::Value& items);
+jobject createBookData(JNIEnv *env, const BookData &bookData);
+Json::Value queryBook(const std::string& query,int maxResults,int startIndex);
 jobject stringToJString(JNIEnv* env, const std::string& str);
 void parse_json(const std::string &rawJson);
 
@@ -30,30 +42,6 @@ JNIEXPORT jstring JNICALL
 jni_prefix(example)(JNIEnv *env, jobject) {
     __android_log_write(ANDROID_LOG_ERROR,
                         "DEBUG", "JNI call");
-
-    CURL* curl = curl_easy_init();
-    if (curl) {
-        std::string url = "https://www.googleapis.com/books/v1/volumes?q=ios&maxResults=20&startIndex=0";
-        std::string result;
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result);
-
-        CURLcode res = curl_easy_perform(curl);
-
-        if (res != CURLE_OK)
-            result = R"({"error":"Failed to fetch data"})";
-
-        __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG", std::to_string(res).c_str());
-        __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG", result.c_str());
-
-        parse_json(result);
-
-        curl_easy_cleanup(curl);
-    }
 
     return env->NewStringUTF("Example");
 
@@ -84,9 +72,59 @@ void parse_json(const std::string &rawJson) {
 
 extern "C"
 JNIEXPORT jobject JNICALL
-jni_prefix(getBooks)(JNIEnv *env, jobject) {
+jni_prefix(getBooks)(JNIEnv *env, jobject ) {
     __android_log_write(ANDROID_LOG_ERROR,
                         "DEBUG", "JNI call");
+
+    Json::Value items = queryBook("ios", 20, 0);
+    jobject bookItem = mapToBooList(env, items);
+    return bookItem;
+}
+
+jobject
+mapToBooList(
+        JNIEnv *env,
+        const Json::Value& items
+) {
+    jobject result;
+    int idx = 0;
+    for (const auto &item: items) {
+        BookData bookData;
+        auto itemInfo = item["volumeInfo"];
+
+        if (!itemInfo.isNull()) {
+            if (!itemInfo["title"].isNull())
+                bookData.title = itemInfo["title"].asCString();
+            __android_log_write(ANDROID_LOG_ERROR,
+                                "DEBUG:TITLE", itemInfo["title"].asCString());
+        }
+
+        if (!itemInfo["authors"].isNull()) {
+            if (itemInfo["authors"].isArray()) {
+                for (const auto &author: itemInfo["authors"]) {
+                    __android_log_write(ANDROID_LOG_ERROR,
+                                        "DEBUG:AUTH", author.asCString());
+                }
+                bookData.author = itemInfo["authors"].get(Json::ArrayIndex(0), "example").asCString();
+            }
+        }
+
+        if (!itemInfo["description"].isNull()) {
+            __android_log_write(ANDROID_LOG_ERROR,
+                                "DEBUG:DESC", itemInfo.get("description", "empty").asCString());
+            bookData.description = itemInfo["description"].asCString();
+        } else {
+            bookData.description = "Not Found";
+        }
+        if (idx++ == 0) {
+            result = createBookData(env, bookData);
+        }
+    }
+    return result;
+}
+
+
+jobject createBookData(JNIEnv *env, const BookData &bookData) {
 
     jclass cls = env->FindClass("xyz/torquato/bookbuy/data/model/BookData");
 
@@ -95,9 +133,9 @@ jni_prefix(getBooks)(JNIEnv *env, jobject) {
     jfieldID authorId = env->GetFieldID(cls, "author", "Ljava/lang/String;");
     jfieldID descriptionId = env->GetFieldID(cls, "description", "Ljava/lang/String;");
 
-    jobject newTitle = stringToJString(env, "Native Title");
-    jobject newAuthor = stringToJString(env, "Native Author");
-    jobject newDescription = stringToJString(env, "Native Description");
+    jobject newTitle = stringToJString(env, bookData.title);
+    jobject newAuthor = stringToJString(env, bookData.author);
+    jobject newDescription = stringToJString(env, bookData.description);
 
     jobject bookItem = env->NewObject(cls, methodId);
 
@@ -106,9 +144,48 @@ jni_prefix(getBooks)(JNIEnv *env, jobject) {
     env->SetObjectField(bookItem, descriptionId, newDescription);
 
     return bookItem;
-
 }
 
+Json::Value
+queryBook(
+        const std::string& query,
+        int maxResults,
+        int startIndex
+) {
+    Json::Value items;
+    CURL* curl = curl_easy_init();
+    if (curl) {
+        std::string url = std::string("https://www.googleapis.com/books/v1/volumes?q=") +
+                          query +
+                          std::string("&maxResults=") +
+                          std::to_string(maxResults) +
+                          std::string("&startIndex=") + std::to_string(startIndex);
+        std::string result;
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result);
+
+        CURLcode res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK)
+            result = R"({"error":"Failed to fetch data"})";
+
+        __android_log_write(ANDROID_LOG_ERROR,
+                            "DEBUG", std::to_string(res).c_str());
+        __android_log_write(ANDROID_LOG_ERROR,
+                            "DEBUG", result.c_str());
+
+        Json::Value root;
+        Json::Reader reader;
+        reader.parse(result, root);
+
+        items = root["items"];
+
+        curl_easy_cleanup(curl);
+    }
+    return items;
+}
 
 jobject stringToJString(JNIEnv* env, const std::string& str)
 {
