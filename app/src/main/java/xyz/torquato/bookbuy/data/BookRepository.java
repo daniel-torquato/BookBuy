@@ -14,7 +14,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import xyz.torquato.bookbuy.data.model.BookList;
 import xyz.torquato.bookbuy.domain.BookItem;
 
 public class BookRepository {
@@ -46,7 +45,6 @@ public class BookRepository {
             for (int i = 0; i<items.length(); i++) {
                 JSONObject jsonItem = items.getJSONObject(i);
                 BookItem item = new BookItem("Not Found", "Not Found", "Not Found");
-                Log.d("MyTag", jsonItem.toString());
 
                 if (!jsonItem.isNull("volumeInfo")) {
                     JSONObject volumeInfo = jsonItem.getJSONObject("volumeInfo");
@@ -62,8 +60,25 @@ public class BookRepository {
                     if (!volumeInfo.isNull("description")) {
                         item.description = volumeInfo.getString("description");
                     }
-                    output.add(item);
+
+                    if (!volumeInfo.isNull("imageLinks")) {
+                        JSONObject imageLinks = volumeInfo.getJSONObject("imageLinks");
+                        item.smallThumbnailUrl = imageLinks.getString("smallThumbnail");
+                        item.largeThumbnailUrl = imageLinks.getString("thumbnail");
+                    }
                 }
+
+                if (!jsonItem.isNull("saleInfo")) {
+                    JSONObject saleInfo = jsonItem.getJSONObject("saleInfo");
+                    if (!jsonItem.isNull("saleability")) {
+                        String saleability = saleInfo.getString("saleability");
+                        if (saleability.equals("FOR_SALE")) {
+                            item.buyLink = saleInfo.getString("buyLink");
+                        }
+                    }
+                }
+
+                output.add(item);
             }
 
         } catch (JSONException e) {

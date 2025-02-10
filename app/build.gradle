@@ -55,6 +55,7 @@ dependencies {
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
     implementation libs.hilt.android
+    implementation libs.glide
     annotationProcessor libs.hilt.compiler
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit

@@ -3,10 +3,13 @@ package xyz.torquato.bookbuy.ui.content.view;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -26,6 +29,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         private final TextView itemAuthor;
         private final TextView itemDescription;
 
+        private final ImageView smallThumbnail;
+
+        private final View parent;
+
+
+
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
@@ -33,14 +42,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             itemTitle = view.findViewById(R.id.itemTitle);
             itemAuthor = view.findViewById(R.id.itemAuthor);
             itemDescription = view.findViewById(R.id.itemDescription);
+            smallThumbnail = view.findViewById(R.id.smallThumbnail);
+            parent = view;
         }
 
         public void setItem(BookItem item) {
             itemTitle.setText(item.title);
             itemAuthor.setText(item.author);
             itemDescription.setText(item.description);
+            // TODO: load in parallel and just some at time.
+            Glide.with(parent).load(item.smallThumbnailUrl).into(smallThumbnail);
         }
     }
+
+
 
     /**
      * Initialize the dataset of the Adapter

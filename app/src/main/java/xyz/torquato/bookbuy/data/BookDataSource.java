@@ -5,8 +5,6 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 
-import xyz.torquato.bookbuy.data.model.BookList;
-
 public class BookDataSource {
 
     // TODO: declare result and error as LiveData.
