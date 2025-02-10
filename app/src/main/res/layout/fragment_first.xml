@@ -11,10 +11,40 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/content_list"
-            android:background="@color/black"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <EditText
+                    android:id="@+id/search_bar"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="Search something"
+                    android:inputType="textCapSentences|textAutoCorrect"
+                    tools:ignore="LabelFor" />
+                <CheckBox
+                    android:id="@+id/favorite"
+                    android:button="@android:drawable/btn_star"
+                    android:background="@android:color/transparent"
+                    android:buttonTint="@color/material_dynamic_tertiary99"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/content_list"
+                android:background="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
