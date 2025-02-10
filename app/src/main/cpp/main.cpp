@@ -7,42 +7,27 @@
 #include <string>
 #include <vector>
 #include <curl/curl.h>
-#include <json/json.h>
 
 #define jni_prefix(func) Java_xyz_torquato_bookbuy_data_BookDataSource_ ## func
 
-size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::string* userp) {
-    const size_t realsize{ size * nmemb };
+size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *userp) {
+    const size_t realsize{size * nmemb};
 
     if (!userp)
         return 0;
 
-    userp->append((char*)contents, realsize);
+    userp->append((char *) contents, realsize);
 
     return realsize;
 }
 
-class BookData {
-public:
-    std::string title;
-    std::string author;
-    std::string description;
+void setJSONCallback(JNIEnv *env, jobject dataSource, jobject jsonData, jobject error);
 
-    BookData() = default;
-};
+jobject createJSON(JNIEnv *env, jobject rawJSON);
 
+void queryBook(const std::string &query, int maxResults, int startIndex, std::string *result);
 
-jboolean appendItemToBookList(JNIEnv *env, jobject bookList, jobject data);
-
-jboolean appendItemToArrayList(JNIEnv *env, jobject list, jobject data);
-
-jobject createEmptyBookList(JNIEnv *env);
-
-jobject mapToBookList(JNIEnv *env, const Json::Value &items);
-
-jobject createBookData(JNIEnv *env, const BookData &bookData);
-
-Json::Value queryBook(const std::string &query, int maxResults, int startIndex);
+jobject createJSONException(JNIEnv *env, jstring message);
 
 jobject stringToJString(JNIEnv *env, const std::string &str);
 
@@ -57,169 +42,103 @@ jni_prefix(example)(JNIEnv *env, jobject) {
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL
-jni_prefix(getBooks)(JNIEnv *env, jobject ) {
+JNIEXPORT void JNICALL
+jni_prefix(getBooks)(JNIEnv *env, jobject _this) {
     __android_log_write(ANDROID_LOG_ERROR,
                         "DEBUG", "JNI call");
 
-    Json::Value items = queryBook("ios", 20, 0);
-    jobject bookItem = mapToBookList(env, items);
-    return bookItem;
+    jobject bookItem = nullptr;
+    jobject error = nullptr;
+    try {
+        std::string result;
+        queryBook("ios", 20, 0, &result);
+        jobject _result = stringToJString(env, result);
+        bookItem = createJSON(env, _result);
+    } catch (const std::exception& e) {
+        error = createJSONException(env, env->NewStringUTF(e.what()));
+    }
+    setJSONCallback(env, _this, bookItem, error);
 }
 
-jobject
-mapToBookList(
+void
+setJSONCallback(
         JNIEnv *env,
-        const Json::Value& items
+        jobject dataSource,
+        jobject jsonData,
+        jobject error
 ) {
-    jobject result = createEmptyBookList(env);
-    for (const auto &item: items) {
-        BookData bookData;
-        auto itemInfo = item["volumeInfo"];
+    jclass clsDataSource = env->FindClass("xyz/torquato/bookbuy/data/BookDataSource");
 
-        if (!itemInfo.isNull()) {
-            if (!itemInfo["title"].isNull())
-                bookData.title = itemInfo["title"].asCString();
-            __android_log_write(ANDROID_LOG_ERROR,
-                                "DEBUG:TITLE", itemInfo["title"].asCString());
-        }
+    jmethodID setId = env->GetMethodID(clsDataSource, "setResult",
+                                       "(Lorg/json/JSONObject;Lorg/json/JSONException;)V");
 
-        if (!itemInfo["authors"].isNull()) {
-            if (itemInfo["authors"].isArray()) {
-                for (const auto &author: itemInfo["authors"]) {
-                    __android_log_write(ANDROID_LOG_ERROR,
-                                        "DEBUG:AUTH", author.asCString());
-                }
-                bookData.author = itemInfo["authors"].get(Json::ArrayIndex(0), "example").asCString();
-            }
-        }
+    env->CallVoidMethod(dataSource, setId, jsonData, error);
+}
 
-        if (!itemInfo["description"].isNull()) {
-            __android_log_write(ANDROID_LOG_ERROR,
-                                "DEBUG:DESC", itemInfo.get("description", "empty").asCString());
-            bookData.description = itemInfo["description"].asCString();
-        } else {
-            bookData.description = "Not Found";
-        }
 
-       if (!appendItemToBookList(env, result, createBookData(env, bookData))) {
-           __android_log_write(ANDROID_LOG_ERROR,
-                               "DEBUG", "Could not add item");
-       }
-    }
+jobject
+createJSON(
+        JNIEnv *env,
+        jobject rawJSON
+) {
+    jclass clsJSON = env->FindClass("org/json/JSONObject");
+
+    jmethodID initId = env->GetMethodID(clsJSON, "<init>", "(Ljava/lang/String;)V");
+
+    jobject result = env->NewObject(clsJSON, initId, rawJSON);
+
     return result;
 }
 
-
-jobject createBookData(JNIEnv *env, const BookData &bookData) {
-
-    jclass cls = env->FindClass("xyz/torquato/bookbuy/data/model/BookData");
-
-    jmethodID methodId = env->GetMethodID(cls, "<init>", "()V");
-    jfieldID titleId = env->GetFieldID(cls, "title", "Ljava/lang/String;");
-    jfieldID authorId = env->GetFieldID(cls, "author", "Ljava/lang/String;");
-    jfieldID descriptionId = env->GetFieldID(cls, "description", "Ljava/lang/String;");
-
-    jobject newTitle = stringToJString(env, bookData.title);
-    jobject newAuthor = stringToJString(env, bookData.author);
-    jobject newDescription = stringToJString(env, bookData.description);
-
-    jobject bookItem = env->NewObject(cls, methodId);
-
-    env->SetObjectField(bookItem, titleId, newTitle);
-    env->SetObjectField(bookItem, authorId, newAuthor);
-    env->SetObjectField(bookItem, descriptionId, newDescription);
-
-    return bookItem;
-}
-
-jobject createEmptyBookList(JNIEnv *env) {
-    jclass clsBookList = env->FindClass("xyz/torquato/bookbuy/data/model/BookList");
-    jclass clsArrayList = env->FindClass("java/util/ArrayList");
-
-    jmethodID methodId = env->GetMethodID(clsBookList, "<init>", "()V");
-    jmethodID arrayListInitId = env->GetMethodID(clsArrayList, "<init>", "()V");
-
-    jobject bookList = env->NewObject(clsBookList, methodId);
-    jfieldID itemsId = env->GetFieldID(clsBookList, "items", "Ljava/util/ArrayList;");
-
-    jobject arrayList = env->NewObject(clsArrayList, arrayListInitId);
-
-    env->SetObjectField(bookList, itemsId, arrayList);
-
-    return bookList;
-}
-
-jboolean
-appendItemToBookList(
+jobject
+createJSONException(
         JNIEnv *env,
-        jobject bookList,
-        jobject data
+        jstring message
 ) {
-    jclass clsBookList = env->FindClass("xyz/torquato/bookbuy/data/model/BookList");
+    jclass clsJSONException = env->FindClass("org/json/JSONException");
 
-    jfieldID itemsId = env->GetFieldID(clsBookList, "items", "Ljava/util/ArrayList;");
-    jobject bookItems = env->GetObjectField(bookList, itemsId);
+    jmethodID initId = env->GetMethodID(clsJSONException, "<init>", "(Ljava/lang/String;)V");
 
-    return appendItemToArrayList(env, bookItems, data);
+    jobject result = env->NewObject(clsJSONException, initId, message);
+
+    return result;
 }
 
-jboolean
-appendItemToArrayList(
-        JNIEnv *env,
-        jobject list,
-        jobject data
-) {
-    jclass clsArrayList = env->FindClass("java/util/ArrayList");
-
-    jmethodID addId = env->GetMethodID(clsArrayList, "add", "(Ljava/lang/Object;)Z");
-
-    return env->CallBooleanMethod(list, addId, data);
-}
-
-Json::Value
+void
 queryBook(
-        const std::string& query,
+        const std::string &query,
         int maxResults,
-        int startIndex
+        int startIndex,
+        std::string *result
 ) {
-    Json::Value items;
-    CURL* curl = curl_easy_init();
+
+    CURL *curl = curl_easy_init();
     if (curl) {
         std::string url = std::string("https://www.googleapis.com/books/v1/volumes?q=") +
                           query +
                           std::string("&maxResults=") +
                           std::to_string(maxResults) +
                           std::string("&startIndex=") + std::to_string(startIndex);
-        std::string result;
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, result);
 
         CURLcode res = curl_easy_perform(curl);
 
         if (res != CURLE_OK)
-            result = R"({"error":"Failed to fetch data"})";
+            *result = std::string(R"({"error":"Failed to fetch data"})");
 
         __android_log_write(ANDROID_LOG_ERROR,
                             "DEBUG", std::to_string(res).c_str());
         __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG", result.c_str());
-
-        Json::Value root;
-        Json::Reader reader;
-        reader.parse(result, root);
-
-        items = root["items"];
+                            "DEBUG", result->c_str());
 
         curl_easy_cleanup(curl);
     }
-    return items;
 }
 
-jobject stringToJString(JNIEnv* env, const std::string& str)
-{
+jobject stringToJString(JNIEnv *env, const std::string &str) {
     int state = 0;
     jstring encoding = nullptr;
     jclass stringClass = nullptr;
