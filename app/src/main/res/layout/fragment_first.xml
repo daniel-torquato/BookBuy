@@ -20,7 +20,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <EditText
+                <androidx.appcompat.widget.SearchView
                     android:id="@+id/search_bar"
                     android:layout_weight="1"
                     android:layout_width="0dp"

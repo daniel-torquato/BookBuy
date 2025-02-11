@@ -3,7 +3,7 @@ package xyz.torquato.bookbuy.data;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,31 +14,34 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import xyz.torquato.bookbuy.data.model.QueryResult;
 import xyz.torquato.bookbuy.domain.BookItem;
+import xyz.torquato.bookbuy.domain.QueryData;
 
 public class BookRepository {
-    public final MutableLiveData<List<BookItem>> example = new MutableLiveData<>();
+
+    private final BookDataSource dataSource;
+    public final LiveData<List<BookItem>> items;
 
     @Inject
     public BookRepository(BookDataSource dataSource) {
-
-        dataSource.getBooks();
-        if (dataSource.getError() == null) {
-            JSONObject result = dataSource.getResult();
-
-            example.setValue(toDomain(result));
-        } else {
-            Log.d("MyTag", dataSource.getError().toString());
-        }
-
+        this.dataSource = dataSource;
+        items = Transformations.map(dataSource.data, data -> {
+            if (data instanceof QueryResult.Valid) {
+                return toDomain(((QueryResult.Valid) data).data);
+            } else if (data instanceof QueryResult.Error) {
+                return List.of(new BookItem("No Title", "No Author", "No Description"));
+            }
+            return List.of();
+        });
     }
 
-    public LiveData<List<BookItem>> getItems() {
-        return example;
+    public void setQuery(QueryData data) {
+        dataSource.Search(data.query, data.startIndex, data.maxResults);
     }
-
 
     List<BookItem> toDomain(JSONObject input) {
+        Log.d("MyTag", "Converting to Domain");
         List<BookItem> output = new ArrayList<>();
         try {
             JSONArray items = input.getJSONArray("items");

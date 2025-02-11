@@ -1,5 +1,7 @@
 package xyz.torquato.bookbuy.domain;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -13,7 +15,7 @@ public class GetContentUseCase {
     private final BookRepository repository;
 
     public LiveData<List<BookItem>> __invoke__() {
-        return repository.getItems();
+        return repository.items;
     }
 
     @Inject

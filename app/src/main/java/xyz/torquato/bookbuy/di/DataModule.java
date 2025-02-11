@@ -1,18 +1,22 @@
 package xyz.torquato.bookbuy.di;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
-import dagger.hilt.android.components.FragmentComponent;
+import dagger.hilt.components.SingletonComponent;
 import xyz.torquato.bookbuy.data.BookDataSource;
 import xyz.torquato.bookbuy.data.BookRepository;
 import xyz.torquato.bookbuy.domain.GetContentUseCase;
+import xyz.torquato.bookbuy.domain.SetQueryUseCase;
 import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
 
 @Module
-@InstallIn(FragmentComponent.class)
+@InstallIn(SingletonComponent.class)
 public class DataModule {
 
+    @Singleton
     @Provides
     public static BookDataSource providesBookDataSource() {
         return new BookDataSource();
@@ -33,10 +37,18 @@ public class DataModule {
     }
 
     @Provides
-    public static BookMenuViewModel provideBookMenuViewModel(
-            GetContentUseCase useCase
+    public static SetQueryUseCase provideSetQueryUseCase(
+            BookRepository bookRepository
     ) {
-        return new BookMenuViewModel(useCase);
+        return new SetQueryUseCase(bookRepository);
+    }
+
+    @Provides
+    public static BookMenuViewModel provideBookMenuViewModel(
+            GetContentUseCase getContentUseCase,
+            SetQueryUseCase setQueryUseCase
+    ) {
+        return new BookMenuViewModel(getContentUseCase, setQueryUseCase);
     }
 
 

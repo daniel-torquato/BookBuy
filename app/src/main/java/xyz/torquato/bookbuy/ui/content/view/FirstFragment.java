@@ -1,13 +1,13 @@
 package xyz.torquato.bookbuy.ui.content.view;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -40,32 +40,31 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         var dataSet = new ArrayList<BookItem>();
-        viewModel.bookMenu.observe(getViewLifecycleOwner(), item -> {
-            dataSet.clear();
-            dataSet.addAll(item.content);
-        });
+
 
         CustomAdapter adapter = new CustomAdapter(dataSet);
+        viewModel.bookMenu.observe(getViewLifecycleOwner(), item -> {
+            Log.d("MyTag", "Check view input " + item.content.size());
+            dataSet.clear();
+            dataSet.addAll(item.content);
+            adapter.notifyDataSetChanged();
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         binding.contentList.setLayoutManager(layoutManager);
         binding.contentList.setAdapter(adapter);
-        TextWatcher watcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                viewModel.Search(s, 0, 5);
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+            public boolean onQueryTextChange(String s) {
+                return false;
             }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        };
-        binding.searchBar.addTextChangedListener(watcher);
+        });
     }
 
     @Override

@@ -10,40 +10,23 @@
 
 #define jni_prefix(func) Java_xyz_torquato_bookbuy_data_BookDataSource_ ## func
 
-size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *userp) {
-    const size_t realsize{size * nmemb};
-
-    if (!userp)
-        return 0;
-
-    userp->append((char *) contents, realsize);
-
-    return realsize;
-}
-
-void setJSONCallback(JNIEnv *env, jobject dataSource, jobject jsonData, jobject error);
-
-jobject createJSON(JNIEnv *env, jobject rawJSON);
-
+size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *userp);
 void queryBook(const std::string &query, int maxResults, int startIndex, std::string *result);
 
+void setJSONCallback(JNIEnv *env, jobject dataSource, jobject jsonData, jobject error);
+jobject createJSON(JNIEnv *env, jobject rawJSON);
 jobject createJSONException(JNIEnv *env, jstring message);
-
 jobject stringToJString(JNIEnv *env, const std::string &str);
 
 extern "C"
-JNIEXPORT jstring JNICALL
-jni_prefix(example)(JNIEnv *env, jobject) {
-    __android_log_write(ANDROID_LOG_ERROR,
-                        "DEBUG", "JNI call");
-
-    return env->NewStringUTF("Example");
-
-}
-
-extern "C"
 JNIEXPORT void JNICALL
-jni_prefix(getBooks)(JNIEnv *env, jobject _this) {
+jni_prefix(Search)(
+        JNIEnv *env,
+        jobject _this,
+        jstring query,
+        jint startIndex,
+        jint maxResults
+) {
     __android_log_write(ANDROID_LOG_ERROR,
                         "DEBUG", "JNI call");
 
@@ -51,7 +34,8 @@ jni_prefix(getBooks)(JNIEnv *env, jobject _this) {
     jobject error = nullptr;
     try {
         std::string result;
-        queryBook("ios", 20, 0, &result);
+        std::string queryString = env->GetStringUTFChars(query, nullptr);
+        queryBook(queryString, maxResults, startIndex, &result);
         jobject _result = stringToJString(env, result);
         bookItem = createJSON(env, _result);
     } catch (const std::exception& e) {
@@ -129,11 +113,6 @@ queryBook(
         if (res != CURLE_OK)
             *result = std::string(R"({"error":"Failed to fetch data"})");
 
-        __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG", std::to_string(res).c_str());
-        __android_log_write(ANDROID_LOG_ERROR,
-                            "DEBUG", result->c_str());
-
         curl_easy_cleanup(curl);
     }
 }
@@ -193,4 +172,15 @@ jobject stringToJString(JNIEnv *env, const std::string &str) {
     }
 
     return result;
+}
+
+size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *userp) {
+    const size_t realsize{size * nmemb};
+
+    if (!userp)
+        return 0;
+
+    userp->append((char *) contents, realsize);
+
+    return realsize;
 }
