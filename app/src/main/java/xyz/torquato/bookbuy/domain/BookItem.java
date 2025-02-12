@@ -14,6 +14,8 @@ public class BookItem {
 
     public String largeThumbnailUrl;
 
+    public boolean hasBuyLink;
+
     public String buyLink;
 
     public BookItem(String _title, String _author, String _description) {

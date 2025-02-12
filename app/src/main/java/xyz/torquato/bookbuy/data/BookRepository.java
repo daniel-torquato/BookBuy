@@ -79,10 +79,13 @@ public class BookRepository {
 
                 if (!jsonItem.isNull("saleInfo")) {
                     JSONObject saleInfo = jsonItem.getJSONObject("saleInfo");
-                    if (!jsonItem.isNull("saleability")) {
+                    if (!saleInfo.isNull("saleability")) {
                         String saleability = saleInfo.getString("saleability");
                         if (saleability.equals("FOR_SALE")) {
+                            item.hasBuyLink = true;
                             item.buyLink = saleInfo.getString("buyLink");
+                        } else {
+                            item.hasBuyLink = false;
                         }
                     }
                 }

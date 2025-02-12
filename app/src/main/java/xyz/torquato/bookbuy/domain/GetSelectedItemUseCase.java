@@ -1,7 +1,5 @@
 package xyz.torquato.bookbuy.domain;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -27,9 +25,7 @@ public class GetSelectedItemUseCase {
         return Transformations.switchMap(selectionRepository.selectedItemId, id ->
                 {
                     if (id >= 0) {
-                        return Transformations.map(bookRepository.items, bookItems ->
-                                bookItems.get(id)
-                        );
+                        return Transformations.map(bookRepository.items, bookItems -> bookItems.get(id));
                     } else {
                         return new MutableLiveData<>();
                     }

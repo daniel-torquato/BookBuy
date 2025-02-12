@@ -1,5 +1,6 @@
 package xyz.torquato.bookbuy.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +39,10 @@ public class SecondFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         binding.buyHere.setOnClickListener(v -> {
-            Log.d("MyTag", "Open browse to buy");
+            Intent buyIntent = viewModel.getBuyIntent();
+            if (buyIntent != null) {
+                startActivity(buyIntent);
+            }
         });
 
         binding.favorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -50,6 +54,8 @@ public class SecondFragment extends Fragment {
             binding.itemTitle.setText(item.title);
             binding.itemAuthor.setText(item.author);
             binding.itemDescription.setText(item.description);
+            Log.d("MyTag", "Buy Link: " + item.buyLink);
+            binding.buyHere.setEnabled(item.hasBuyLink);
         });
 
     }

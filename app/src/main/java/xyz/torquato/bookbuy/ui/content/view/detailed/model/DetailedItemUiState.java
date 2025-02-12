@@ -13,6 +13,8 @@ public class DetailedItemUiState {
 
     public String largeThumbnailUrl;
 
+    public Boolean hasBuyLink;
+
     public String buyLink;
 
     public DetailedItemUiState(
@@ -22,6 +24,7 @@ public class DetailedItemUiState {
             String description,
             String smallThumbnailUrl,
             String largeThumbnailUrl,
+            Boolean hasBuyLink,
             String buyLink
     ) {
         this.id = id;
@@ -30,6 +33,7 @@ public class DetailedItemUiState {
         this.description = description;
         this.smallThumbnailUrl = smallThumbnailUrl;
         this.largeThumbnailUrl = largeThumbnailUrl;
+        this.hasBuyLink = hasBuyLink;
         this.buyLink = buyLink;
     }
 }
