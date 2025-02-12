@@ -1,7 +1,11 @@
 package xyz.torquato.bookbuy.domain;
 
 public class BookItem {
+
+    public String id;
+
     public String title;
+
     public String author;
 
     public String description;

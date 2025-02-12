@@ -41,8 +41,14 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         var dataSet = new ArrayList<BookItem>();
 
+        var onClick = new OnThumbnailClick() {
+            @Override
+            public void run(String id) {
+                Log.d("MyTag", "OnCLick " + id);
+            }
+        };
 
-        CustomAdapter adapter = new CustomAdapter(dataSet);
+        CustomAdapter adapter = new CustomAdapter(dataSet, onClick);
         viewModel.bookMenu.observe(getViewLifecycleOwner(), item -> {
             Log.d("MyTag", "Check view input " + item.content.size());
             dataSet.clear();

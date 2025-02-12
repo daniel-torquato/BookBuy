@@ -49,6 +49,10 @@ public class BookRepository {
                 JSONObject jsonItem = items.getJSONObject(i);
                 BookItem item = new BookItem("Not Found", "Not Found", "Not Found");
 
+                if (!jsonItem.isNull("id")) {
+                    item.id = jsonItem.getString("id");
+                }
+
                 if (!jsonItem.isNull("volumeInfo")) {
                     JSONObject volumeInfo = jsonItem.getJSONObject("volumeInfo");
                     if (!volumeInfo.isNull("title")) {

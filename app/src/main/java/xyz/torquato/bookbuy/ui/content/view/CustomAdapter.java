@@ -18,6 +18,7 @@ import xyz.torquato.bookbuy.domain.BookItem;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
     private final ArrayList<BookItem> localDataSet;
+    private final OnThumbnailClick action;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -51,8 +52,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
      * @param dataSet String[] containing the data to populate views to be used
      * by RecyclerView
      */
-    public CustomAdapter(ArrayList<BookItem> dataSet) {
+    public CustomAdapter(ArrayList<BookItem> dataSet, OnThumbnailClick action) {
         localDataSet = dataSet;
+        this.action = action;
     }
 
     // Create new views (invoked by the layout manager)
@@ -76,6 +78,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         viewHolder.setItem(localDataSet.get(position));
+
+        viewHolder.smallThumbnail.setOnClickListener(v -> {
+            action.run(localDataSet.get(position).id);
+        });
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
