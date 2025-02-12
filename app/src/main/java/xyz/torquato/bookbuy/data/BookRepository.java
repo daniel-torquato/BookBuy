@@ -15,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import xyz.torquato.bookbuy.concurrency.IOExecutor;
 import xyz.torquato.bookbuy.data.model.QueryResult;
 import xyz.torquato.bookbuy.domain.BookItem;
 import xyz.torquato.bookbuy.domain.QueryData;
@@ -24,9 +25,10 @@ public class BookRepository {
 
     private final BookDataSource dataSource;
     public final LiveData<List<BookItem>> items;
+    private final IOExecutor executor;
 
     @Inject
-    public BookRepository(BookDataSource dataSource) {
+    public BookRepository(BookDataSource dataSource, IOExecutor executor) {
         this.dataSource = dataSource;
         items = Transformations.map(dataSource.data, data -> {
             if (data instanceof QueryResult.Valid) {
@@ -36,10 +38,13 @@ public class BookRepository {
             }
             return List.of();
         });
+        this.executor = executor;
     }
 
     public void setQuery(QueryData data) {
-        dataSource.Search(data.query, data.startIndex, data.maxResults);
+        executor.execute(() ->
+                dataSource.Search(data.query, data.startIndex, data.maxResults)
+        );
     }
 
     List<BookItem> toDomain(JSONObject input) {

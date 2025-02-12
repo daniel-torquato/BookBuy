@@ -20,9 +20,9 @@ public class BookDataSource {
 
     public void setResult(JSONObject input, JSONException error) {
         if (error != null) {
-            data.setValue(new QueryResult.Error(error));
+            data.postValue(new QueryResult.Error(error));
         } else {
-            data.setValue(new QueryResult.Valid(input));
+            data.postValue(new QueryResult.Valid(input));
         }
     }
 

@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.room.Room;
 
+import java.util.concurrent.Executors;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -11,6 +13,7 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+import xyz.torquato.bookbuy.concurrency.IOExecutor;
 import xyz.torquato.bookbuy.data.BookDataSource;
 import xyz.torquato.bookbuy.data.BookRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
@@ -35,8 +38,12 @@ public class DataModule {
     ) {
         return Room.databaseBuilder(appContext,
                         FavoritesDatabase.class, "favorite-books")
-                .allowMainThreadQueries()
                 .build();
+    }
+
+    @Provides
+    public static IOExecutor providesDBExecutor()  {
+        return new IOExecutor(Executors.newFixedThreadPool(3));
     }
 
     @Provides
@@ -62,9 +69,10 @@ public class DataModule {
 
     @Provides
     public static BookRepository providesBookRepository(
-            BookDataSource bookDataSource
+            BookDataSource bookDataSource,
+            IOExecutor executor
     ) {
-        return new BookRepository(bookDataSource);
+        return new BookRepository(bookDataSource, executor);
     }
 
     @Provides
