@@ -16,16 +16,18 @@ public class DetailedItemUiState {
     public String buyLink;
 
     public DetailedItemUiState(
-            String _title,
-            String _author,
-            String _description,
+            String id,
+            String title,
+            String author,
+            String description,
             String smallThumbnailUrl,
             String largeThumbnailUrl,
             String buyLink
     ) {
-        title = _title;
-        author = _author;
-        description = _description;
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.description = description;
         this.smallThumbnailUrl = smallThumbnailUrl;
         this.largeThumbnailUrl = largeThumbnailUrl;
         this.buyLink = buyLink;

@@ -8,9 +8,11 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 import xyz.torquato.bookbuy.data.BookDataSource;
 import xyz.torquato.bookbuy.data.BookRepository;
+import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
 import xyz.torquato.bookbuy.data.selection.SelectionRepository;
 import xyz.torquato.bookbuy.domain.GetContentUseCase;
 import xyz.torquato.bookbuy.domain.GetSelectedItemUseCase;
+import xyz.torquato.bookbuy.domain.PerformFavoriteUseCase;
 import xyz.torquato.bookbuy.domain.SetQueryUseCase;
 import xyz.torquato.bookbuy.domain.SetSelectedItemIdUseCase;
 import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
@@ -63,6 +65,13 @@ public class DataModule {
     }
 
     @Provides
+    public static PerformFavoriteUseCase providePerformFavoriteUseCase(
+            FavoriteRepository favoriteRepository
+    ) {
+        return new PerformFavoriteUseCase(favoriteRepository);
+    }
+
+    @Provides
     public static BookMenuViewModel provideBookMenuViewModel(
             GetContentUseCase getContentUseCase,
             SetQueryUseCase setQueryUseCase,
@@ -73,9 +82,10 @@ public class DataModule {
 
     @Provides
     public static DetailedItemViewModel provideDetailedItemViewModel(
-            GetSelectedItemUseCase getSelectedItemUseCase
+            GetSelectedItemUseCase getSelectedItemUseCase,
+            PerformFavoriteUseCase performFavoriteUseCase
     ) {
-        return new DetailedItemViewModel(getSelectedItemUseCase);
+        return new DetailedItemViewModel(getSelectedItemUseCase, performFavoriteUseCase);
     }
 
 

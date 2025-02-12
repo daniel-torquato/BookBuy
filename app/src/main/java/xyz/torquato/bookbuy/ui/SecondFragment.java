@@ -42,7 +42,7 @@ public class SecondFragment extends Fragment {
         });
 
         binding.favorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.d("MyTag", "Is favorite: " + isChecked);
+            viewModel.OnPerformFavorite(isChecked);
         });
         Log.d("MyTag", "Second view created");
         viewModel.uiState.observe(getViewLifecycleOwner(), item -> {
