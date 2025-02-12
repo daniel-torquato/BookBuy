@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.ArrayList;
 
@@ -49,7 +49,7 @@ public class FirstFragment extends Fragment {
             dataSet.addAll(item.content);
             adapter.notifyDataSetChanged();
         });
-        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         binding.contentList.setLayoutManager(layoutManager);
         binding.contentList.setAdapter(adapter);
 

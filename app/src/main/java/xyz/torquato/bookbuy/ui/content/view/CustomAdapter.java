@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,33 +24,22 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
      * (custom ViewHolder)
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView itemTitle;
-        private final TextView itemAuthor;
-        private final TextView itemDescription;
-
         private final ImageView smallThumbnail;
 
         private final View parent;
-
 
 
         public ViewHolder(View view) {
             super(view);
             // Define click listener for the ViewHolder's View
 
-            itemTitle = view.findViewById(R.id.itemTitle);
-            itemAuthor = view.findViewById(R.id.itemAuthor);
-            itemDescription = view.findViewById(R.id.itemDescription);
             smallThumbnail = view.findViewById(R.id.smallThumbnail);
             parent = view;
         }
 
         public void setItem(BookItem item) {
-            itemTitle.setText(item.title);
-            itemAuthor.setText(item.author);
-            itemDescription.setText(item.description);
             // TODO: load in parallel and just some at time.
-            Glide.with(parent).load(item.smallThumbnailUrl).into(smallThumbnail);
+            Glide.with(parent).load(item.largeThumbnailUrl).into(smallThumbnail);
         }
     }
 
@@ -73,6 +61,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
+
+
+        ViewGroup.LayoutParams lp = view.getLayoutParams();
+        lp.width = (viewGroup.getWidth() / 2);
+        lp.height = (viewGroup.getWidth() / 8 * 5);
+        view.setLayoutParams(lp);
+
 
         return new ViewHolder(view);
     }
