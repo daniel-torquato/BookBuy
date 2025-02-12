@@ -59,9 +59,10 @@ public class DataModule {
     @Provides
     public static GetSelectedItemUseCase provideGetSelectedItemUseCase(
             SelectionRepository selectionRepository,
+            FavoriteRepository favoriteRepository,
             BookRepository bookRepository
     ) {
-        return new GetSelectedItemUseCase(selectionRepository, bookRepository);
+        return new GetSelectedItemUseCase(selectionRepository, favoriteRepository, bookRepository);
     }
 
     @Provides

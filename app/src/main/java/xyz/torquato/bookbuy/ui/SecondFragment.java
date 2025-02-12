@@ -45,17 +45,17 @@ public class SecondFragment extends Fragment {
             }
         });
 
-        binding.favorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            viewModel.OnPerformFavorite(isChecked);
-        });
+        binding.favorite.setOnCheckedChangeListener((buttonView, isChecked) ->
+                viewModel.OnPerformFavorite(isChecked)
+        );
         Log.d("MyTag", "Second view created");
         viewModel.uiState.observe(getViewLifecycleOwner(), item -> {
             loadImage(item.largeThumbnailUrl);
             binding.itemTitle.setText(item.title);
             binding.itemAuthor.setText(item.author);
             binding.itemDescription.setText(item.description);
-            Log.d("MyTag", "Buy Link: " + item.buyLink);
             binding.buyHere.setEnabled(item.hasBuyLink);
+            binding.favorite.setChecked(item.isFavorite);
         });
 
     }

@@ -26,14 +26,15 @@ public class DetailedItemViewModel extends ViewModel  {
     public DetailedItemViewModel(GetSelectedItemUseCase getSelectedItemUseCase, PerformFavoriteUseCase performFavoriteUseCase) {
         getSelectedItemUseCase.__invoke__().observeForever(selectedItem -> uiState.setValue(
                 new DetailedItemUiState(
-                        selectedItem.id,
-                        selectedItem.title,
-                        selectedItem.author,
-                        selectedItem.description,
-                        selectedItem.smallThumbnailUrl,
-                        selectedItem.largeThumbnailUrl,
-                        selectedItem.hasBuyLink,
-                        selectedItem.buyLink
+                        selectedItem.item.id,
+                        selectedItem.item.title,
+                        selectedItem.item.author,
+                        selectedItem.item.description,
+                        selectedItem.item.smallThumbnailUrl,
+                        selectedItem.item.largeThumbnailUrl,
+                        selectedItem.item.hasBuyLink,
+                        selectedItem.item.buyLink,
+                        selectedItem.isFavorite
                 )
         ));
         this.performFavoriteUseCase = performFavoriteUseCase;
