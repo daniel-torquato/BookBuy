@@ -18,7 +18,14 @@ public class DetailedItemViewModel extends ViewModel  {
     @Inject
     public DetailedItemViewModel(GetSelectedItemUseCase getSelectedItemUseCase) {
         uiState = Transformations.map(getSelectedItemUseCase.__invoke__(), selectedItem ->
-                new DetailedItemUiState(selectedItem.title, selectedItem.author, selectedItem.description)
+                new DetailedItemUiState(
+                        selectedItem.title,
+                        selectedItem.author,
+                        selectedItem.description,
+                        selectedItem.smallThumbnailUrl,
+                        selectedItem.largeThumbnailUrl,
+                        selectedItem.buyLink
+                )
         );
     }
 

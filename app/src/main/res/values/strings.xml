@@ -44,7 +44,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
-    <string name="element_text">
-        Loading
-    </string>
+    <string name="element_text">Loading</string>
+    <string name="detailed_title">Title</string>
+    <string name="detailed_author">Author</string>
+    <string name="detailed_description">Description</string>
+    <string name="detailed_buyLink">Buy Here</string>
 </resources>
