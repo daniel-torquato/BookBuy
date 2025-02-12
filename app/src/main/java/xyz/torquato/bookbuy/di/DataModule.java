@@ -1,14 +1,21 @@
 package xyz.torquato.bookbuy.di;
 
+import android.content.Context;
+
+import androidx.room.Room;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import xyz.torquato.bookbuy.data.BookDataSource;
 import xyz.torquato.bookbuy.data.BookRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
+import xyz.torquato.bookbuy.data.favorites.FavoritesDao;
+import xyz.torquato.bookbuy.data.favorites.FavoritesDatabase;
 import xyz.torquato.bookbuy.data.selection.SelectionRepository;
 import xyz.torquato.bookbuy.domain.GetContentUseCase;
 import xyz.torquato.bookbuy.domain.GetSelectedItemUseCase;
@@ -21,6 +28,31 @@ import xyz.torquato.bookbuy.ui.content.view.detailed.DetailedItemViewModel;
 @Module
 @InstallIn(SingletonComponent.class)
 public class DataModule {
+
+    @Provides
+    public static FavoritesDatabase providesFavoritesDatabase(
+            @ApplicationContext Context appContext
+    ) {
+        return Room.databaseBuilder(appContext,
+                        FavoritesDatabase.class, "favorite-books")
+                .allowMainThreadQueries()
+                .build();
+    }
+
+    @Provides
+    public static FavoritesDao providesFavoritesDao(
+            FavoritesDatabase favoritesDatabase
+    ) {
+        return favoritesDatabase.favoritesDao();
+    }
+
+    @Provides
+    public static FavoriteRepository providesFavoriteRepository(
+            FavoritesDao favoritesDao
+    ) {
+        return new FavoriteRepository(favoritesDao);
+    }
+
 
     @Singleton
     @Provides
