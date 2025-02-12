@@ -64,10 +64,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.text_row_item, viewGroup, false);
 
-
         ViewGroup.LayoutParams lp = view.getLayoutParams();
-        lp.width = (viewGroup.getWidth() / 2);
-        lp.height = (viewGroup.getWidth() / 8 * 5);
+        lp.width = (viewGroup.getMeasuredWidth() / 2);
+        lp.height = (viewGroup.getMeasuredWidth() / 8 * 5);
         view.setLayoutParams(lp);
 
 
@@ -80,7 +79,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         viewHolder.setItem(localDataSet.get(position));
 
         viewHolder.smallThumbnail.setOnClickListener(v -> {
-            action.run(localDataSet.get(position).id);
+            action.run(position);
         });
 
     }

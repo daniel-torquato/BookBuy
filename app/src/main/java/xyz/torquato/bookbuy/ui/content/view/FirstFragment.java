@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import xyz.torquato.bookbuy.R;
 import xyz.torquato.bookbuy.databinding.FragmentFirstBinding;
 import xyz.torquato.bookbuy.domain.BookItem;
 import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
@@ -43,8 +46,10 @@ public class FirstFragment extends Fragment {
 
         var onClick = new OnThumbnailClick() {
             @Override
-            public void run(String id) {
+            public void run(int id) {
                 Log.d("MyTag", "OnCLick " + id);
+                OnOpenDetail();
+                viewModel.OnSelect(id);
             }
         };
 
@@ -79,4 +84,8 @@ public class FirstFragment extends Fragment {
         binding = null;
     }
 
+    void OnOpenDetail() {
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
+        navController.navigate(R.id.action_FirstFragment_to_SecondFragment);
+    }
 }

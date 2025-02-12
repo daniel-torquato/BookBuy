@@ -8,9 +8,13 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
 import xyz.torquato.bookbuy.data.BookDataSource;
 import xyz.torquato.bookbuy.data.BookRepository;
+import xyz.torquato.bookbuy.data.selection.SelectionRepository;
 import xyz.torquato.bookbuy.domain.GetContentUseCase;
+import xyz.torquato.bookbuy.domain.GetSelectedItemUseCase;
 import xyz.torquato.bookbuy.domain.SetQueryUseCase;
+import xyz.torquato.bookbuy.domain.SetSelectedItemIdUseCase;
 import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
+import xyz.torquato.bookbuy.ui.content.view.detailed.DetailedItemViewModel;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -44,11 +48,34 @@ public class DataModule {
     }
 
     @Provides
+    public static SetSelectedItemIdUseCase provideSetSelectedItemUseCase(
+            SelectionRepository selectionRepository
+    ) {
+        return new SetSelectedItemIdUseCase(selectionRepository);
+    }
+
+    @Provides
+    public static GetSelectedItemUseCase provideGetSelectedItemUseCase(
+            SelectionRepository selectionRepository,
+            BookRepository bookRepository
+    ) {
+        return new GetSelectedItemUseCase(selectionRepository, bookRepository);
+    }
+
+    @Provides
     public static BookMenuViewModel provideBookMenuViewModel(
             GetContentUseCase getContentUseCase,
-            SetQueryUseCase setQueryUseCase
+            SetQueryUseCase setQueryUseCase,
+            SetSelectedItemIdUseCase setSelectedItemIdUseCase
     ) {
-        return new BookMenuViewModel(getContentUseCase, setQueryUseCase);
+        return new BookMenuViewModel(getContentUseCase, setQueryUseCase, setSelectedItemIdUseCase);
+    }
+
+    @Provides
+    public static DetailedItemViewModel provideDetailedItemViewModel(
+            GetSelectedItemUseCase getSelectedItemUseCase
+    ) {
+        return new DetailedItemViewModel(getSelectedItemUseCase);
     }
 
 

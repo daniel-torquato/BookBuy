@@ -13,11 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import xyz.torquato.bookbuy.data.model.QueryResult;
 import xyz.torquato.bookbuy.domain.BookItem;
 import xyz.torquato.bookbuy.domain.QueryData;
 
+@Singleton
 public class BookRepository {
 
     private final BookDataSource dataSource;
