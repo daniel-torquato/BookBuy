@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui;
+package xyz.torquato.bookbuy.ui.view.detailed;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import xyz.torquato.bookbuy.databinding.FragmentSecondBinding;
-import xyz.torquato.bookbuy.ui.content.view.detailed.DetailedItemViewModel;
 
 @AndroidEntryPoint
 public class SecondFragment extends Fragment {

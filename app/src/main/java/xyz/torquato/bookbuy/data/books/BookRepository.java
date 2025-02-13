@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.data;
+package xyz.torquato.bookbuy.data.books;
 
 import android.util.Log;
 
@@ -16,9 +16,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import xyz.torquato.bookbuy.concurrency.IOExecutor;
-import xyz.torquato.bookbuy.data.model.QueryResult;
-import xyz.torquato.bookbuy.domain.BookItem;
-import xyz.torquato.bookbuy.domain.QueryData;
+import xyz.torquato.bookbuy.data.books.model.QueryResult;
+import xyz.torquato.bookbuy.domain.model.BookItem;
+import xyz.torquato.bookbuy.domain.search.QueryData;
 
 @Singleton
 public class BookRepository {

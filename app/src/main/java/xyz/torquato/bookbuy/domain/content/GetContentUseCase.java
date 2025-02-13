@@ -1,6 +1,4 @@
-package xyz.torquato.bookbuy.domain;
-
-import android.util.Log;
+package xyz.torquato.bookbuy.domain.content;
 
 import androidx.lifecycle.LiveData;
 
@@ -8,7 +6,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import xyz.torquato.bookbuy.data.BookRepository;
+import xyz.torquato.bookbuy.data.books.BookRepository;
+import xyz.torquato.bookbuy.domain.model.BookItem;
 
 public class GetContentUseCase {
 

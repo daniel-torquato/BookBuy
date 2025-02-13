@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.data.model;
+package xyz.torquato.bookbuy.data.books.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

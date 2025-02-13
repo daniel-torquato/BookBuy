@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.domain;
+package xyz.torquato.bookbuy.domain.search;
 
 public class QueryData {
 

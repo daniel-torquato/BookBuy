@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui.content;
+package xyz.torquato.bookbuy.ui.view.menu;
 
 import android.util.Log;
 
@@ -9,11 +9,11 @@ import androidx.lifecycle.ViewModel;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import xyz.torquato.bookbuy.domain.GetContentUseCase;
-import xyz.torquato.bookbuy.domain.QueryData;
-import xyz.torquato.bookbuy.domain.SetQueryUseCase;
-import xyz.torquato.bookbuy.domain.SetSelectedItemIdUseCase;
-import xyz.torquato.bookbuy.ui.content.model.BookMenuUiState;
+import xyz.torquato.bookbuy.domain.content.GetContentUseCase;
+import xyz.torquato.bookbuy.domain.search.QueryData;
+import xyz.torquato.bookbuy.domain.search.SetQueryUseCase;
+import xyz.torquato.bookbuy.domain.selection.SetSelectedItemIdUseCase;
+import xyz.torquato.bookbuy.ui.view.menu.model.BookMenuUiState;
 
 @HiltViewModel
 public class BookMenuViewModel extends ViewModel {

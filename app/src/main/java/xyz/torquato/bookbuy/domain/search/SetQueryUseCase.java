@@ -1,8 +1,8 @@
-package xyz.torquato.bookbuy.domain;
+package xyz.torquato.bookbuy.domain.search;
 
 import javax.inject.Inject;
 
-import xyz.torquato.bookbuy.data.BookRepository;
+import xyz.torquato.bookbuy.data.books.BookRepository;
 
 public class SetQueryUseCase {
 

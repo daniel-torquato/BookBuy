@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.domain;
+package xyz.torquato.bookbuy.domain.selection;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -6,9 +6,10 @@ import androidx.lifecycle.Transformations;
 
 import javax.inject.Inject;
 
-import xyz.torquato.bookbuy.data.BookRepository;
+import xyz.torquato.bookbuy.data.books.BookRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
 import xyz.torquato.bookbuy.data.selection.SelectionRepository;
+import xyz.torquato.bookbuy.domain.content.model.SelectedBookItem;
 
 public class GetSelectedItemUseCase {
 

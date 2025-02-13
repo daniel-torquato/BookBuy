@@ -1,8 +1,8 @@
-package xyz.torquato.bookbuy.ui.content.model;
+package xyz.torquato.bookbuy.ui.view.menu.model;
 
 import java.util.List;
 
-import xyz.torquato.bookbuy.domain.BookItem;
+import xyz.torquato.bookbuy.domain.model.BookItem;
 
 public class BookMenuUiState {
 

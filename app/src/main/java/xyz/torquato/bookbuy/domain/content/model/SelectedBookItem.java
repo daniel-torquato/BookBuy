@@ -1,4 +1,6 @@
-package xyz.torquato.bookbuy.domain;
+package xyz.torquato.bookbuy.domain.content.model;
+
+import xyz.torquato.bookbuy.domain.model.BookItem;
 
 public class SelectedBookItem {
 

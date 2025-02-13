@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui.content.view.detailed.model;
+package xyz.torquato.bookbuy.ui.view.detailed.model;
 
 public class DetailedItemUiState {
     public String id;

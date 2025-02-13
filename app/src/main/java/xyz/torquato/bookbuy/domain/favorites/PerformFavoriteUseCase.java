@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.domain;
+package xyz.torquato.bookbuy.domain.favorites;
 
 import javax.inject.Inject;
 

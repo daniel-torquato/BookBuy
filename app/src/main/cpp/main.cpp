@@ -8,7 +8,7 @@
 #include <vector>
 #include <curl/curl.h>
 
-#define jni_prefix(func) Java_xyz_torquato_bookbuy_data_BookDataSource_ ## func
+#define jni_prefix(func) Java_xyz_torquato_bookbuy_data_books_BookDataSource_ ## func
 
 size_t WriteCallback(void *contents, size_t size, size_t nmemb, std::string *userp);
 void queryBook(const std::string &query, int maxResults, int startIndex, std::string *result);
@@ -51,7 +51,7 @@ setJSONCallback(
         jobject jsonData,
         jobject error
 ) {
-    jclass clsDataSource = env->FindClass("xyz/torquato/bookbuy/data/BookDataSource");
+    jclass clsDataSource = env->FindClass("xyz/torquato/bookbuy/data/books/BookDataSource");
 
     jmethodID setId = env->GetMethodID(clsDataSource, "setResult",
                                        "(Lorg/json/JSONObject;Lorg/json/JSONException;)V");

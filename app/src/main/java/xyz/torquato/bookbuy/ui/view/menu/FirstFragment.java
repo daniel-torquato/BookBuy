@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui.content.view;
+package xyz.torquato.bookbuy.ui.view.menu;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +20,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 import xyz.torquato.bookbuy.R;
 import xyz.torquato.bookbuy.databinding.FragmentFirstBinding;
-import xyz.torquato.bookbuy.domain.BookItem;
-import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
+import xyz.torquato.bookbuy.domain.model.BookItem;
 
 @AndroidEntryPoint
 public class FirstFragment extends Fragment {

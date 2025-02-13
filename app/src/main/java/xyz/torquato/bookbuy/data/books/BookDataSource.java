@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.data;
+package xyz.torquato.bookbuy.data.books;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import xyz.torquato.bookbuy.data.model.QueryResult;
+import xyz.torquato.bookbuy.data.books.model.QueryResult;
 
 @Singleton
 public class BookDataSource {

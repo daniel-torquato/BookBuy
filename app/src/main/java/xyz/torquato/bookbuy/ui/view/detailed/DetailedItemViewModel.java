@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui.content.view.detailed;
+package xyz.torquato.bookbuy.ui.view.detailed;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,9 +11,9 @@ import java.util.Objects;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import xyz.torquato.bookbuy.domain.GetSelectedItemUseCase;
-import xyz.torquato.bookbuy.domain.PerformFavoriteUseCase;
-import xyz.torquato.bookbuy.ui.content.view.detailed.model.DetailedItemUiState;
+import xyz.torquato.bookbuy.domain.selection.GetSelectedItemUseCase;
+import xyz.torquato.bookbuy.domain.favorites.PerformFavoriteUseCase;
+import xyz.torquato.bookbuy.ui.view.detailed.model.DetailedItemUiState;
 
 @HiltViewModel
 public class DetailedItemViewModel extends ViewModel  {

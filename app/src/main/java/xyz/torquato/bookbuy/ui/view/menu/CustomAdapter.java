@@ -1,4 +1,4 @@
-package xyz.torquato.bookbuy.ui.content.view;
+package xyz.torquato.bookbuy.ui.view.menu;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import xyz.torquato.bookbuy.R;
-import xyz.torquato.bookbuy.domain.BookItem;
+import xyz.torquato.bookbuy.domain.model.BookItem;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 

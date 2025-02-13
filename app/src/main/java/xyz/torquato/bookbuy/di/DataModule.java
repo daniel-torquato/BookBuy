@@ -14,19 +14,19 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import xyz.torquato.bookbuy.concurrency.IOExecutor;
-import xyz.torquato.bookbuy.data.BookDataSource;
-import xyz.torquato.bookbuy.data.BookRepository;
+import xyz.torquato.bookbuy.data.books.BookDataSource;
+import xyz.torquato.bookbuy.data.books.BookRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoritesDao;
 import xyz.torquato.bookbuy.data.favorites.FavoritesDatabase;
 import xyz.torquato.bookbuy.data.selection.SelectionRepository;
-import xyz.torquato.bookbuy.domain.GetContentUseCase;
-import xyz.torquato.bookbuy.domain.GetSelectedItemUseCase;
-import xyz.torquato.bookbuy.domain.PerformFavoriteUseCase;
-import xyz.torquato.bookbuy.domain.SetQueryUseCase;
-import xyz.torquato.bookbuy.domain.SetSelectedItemIdUseCase;
-import xyz.torquato.bookbuy.ui.content.BookMenuViewModel;
-import xyz.torquato.bookbuy.ui.content.view.detailed.DetailedItemViewModel;
+import xyz.torquato.bookbuy.domain.content.GetContentUseCase;
+import xyz.torquato.bookbuy.domain.selection.GetSelectedItemUseCase;
+import xyz.torquato.bookbuy.domain.favorites.PerformFavoriteUseCase;
+import xyz.torquato.bookbuy.domain.search.SetQueryUseCase;
+import xyz.torquato.bookbuy.domain.selection.SetSelectedItemIdUseCase;
+import xyz.torquato.bookbuy.ui.view.menu.BookMenuViewModel;
+import xyz.torquato.bookbuy.ui.view.detailed.DetailedItemViewModel;
 
 @Module
 @InstallIn(SingletonComponent.class)
