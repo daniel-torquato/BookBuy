@@ -60,9 +60,6 @@ public class FirstFragment extends Fragment {
             dataSet.addAll(item.content);
             adapter.notifyDataSetChanged();
         });
-        viewModel.isFiltered.observeForever(isFiltered -> {
-            binding.favoriteFilter.setChecked(isFiltered);
-        });
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         binding.contentList.setLayoutManager(layoutManager);
         binding.contentList.setAdapter(adapter);

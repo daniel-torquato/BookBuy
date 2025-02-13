@@ -152,16 +152,14 @@ public class DataModule {
             NewSearchUsecase newSearchUsecase,
             IncreaseSearchUseCase increaseSearchUseCase,
             SetSelectedItemIdUseCase setSelectedItemIdUseCase,
-            SetFavoriteFilterUseCase setFavoriteFilterUseCase,
-            GetFavoriteFilterUseCase getFavoriteFilterUseCase
+            SetFavoriteFilterUseCase setFavoriteFilterUseCase
     ) {
         return new BookMenuViewModel(
                 getContentUseCase,
                 newSearchUsecase,
                 increaseSearchUseCase,
                 setSelectedItemIdUseCase,
-                setFavoriteFilterUseCase,
-                getFavoriteFilterUseCase
+                setFavoriteFilterUseCase
         );
     }
 

@@ -8,7 +8,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import xyz.torquato.bookbuy.domain.content.GetContentUseCase;
-import xyz.torquato.bookbuy.domain.favorites.GetFavoriteFilterUseCase;
 import xyz.torquato.bookbuy.domain.favorites.SetFavoriteFilterUseCase;
 import xyz.torquato.bookbuy.domain.search.IncreaseSearchUseCase;
 import xyz.torquato.bookbuy.domain.search.NewSearchUsecase;
@@ -19,13 +18,11 @@ import xyz.torquato.bookbuy.ui.view.menu.model.BookMenuUiState;
 public class BookMenuViewModel extends ViewModel {
 
     public LiveData<BookMenuUiState> bookMenu;
-    public LiveData<Boolean> isFiltered;
 
     private final NewSearchUsecase newSearchUseCase;
     private final IncreaseSearchUseCase increaseSearchUseCase;
     private final SetSelectedItemIdUseCase setSelectedItemIdUseCase;
     private final SetFavoriteFilterUseCase setFavoriteFilterUseCase;
-    private final GetFavoriteFilterUseCase getFavoriteFilterUseCase;
 
     @Inject
     public BookMenuViewModel(
@@ -33,8 +30,7 @@ public class BookMenuViewModel extends ViewModel {
             NewSearchUsecase newSearchUsecase,
             IncreaseSearchUseCase increaseSearchUseCase,
             SetSelectedItemIdUseCase setSelectedItemIdUseCase,
-            SetFavoriteFilterUseCase setFavoriteFilterUseCase,
-            GetFavoriteFilterUseCase getFavoriteFilterUseCase
+            SetFavoriteFilterUseCase setFavoriteFilterUseCase
     ) {
         this.newSearchUseCase = newSearchUsecase;
         this.increaseSearchUseCase = increaseSearchUseCase;
@@ -43,8 +39,6 @@ public class BookMenuViewModel extends ViewModel {
             return new BookMenuUiState(bookItems);
         });
         this.setFavoriteFilterUseCase = setFavoriteFilterUseCase;
-        this.getFavoriteFilterUseCase = getFavoriteFilterUseCase;
-        isFiltered = getFavoriteFilterUseCase.__invoke__();
     }
 
     public void onNewSearch(
