@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -55,10 +56,21 @@ public class FirstFragment extends Fragment {
 
         CustomAdapter adapter = new CustomAdapter(dataSet, onClick);
         viewModel.bookMenu.observeForever(item -> {
-            Log.d("MyTag", "Check view input " + item.content.size());
-            dataSet.clear();
-            dataSet.addAll(item.content);
-            adapter.notifyDataSetChanged();
+            if (dataSet.isEmpty()) {
+                dataSet.addAll(item.content);
+                adapter.notifyItemRangeChanged(0, item.content.size());
+            } else if (item.content.isEmpty()) {
+                int lastSize = dataSet.size();
+                dataSet.clear();
+                adapter.notifyItemRangeRemoved(0, lastSize);
+            } else {
+                if (item.content.size() > dataSet.size()) {
+                    int lastIndex = dataSet.size() - 1;
+                    List<BookItem> updateItems = item.content.subList(dataSet.size() - 1, item.content.size() - 1);
+                    dataSet.addAll(updateItems);
+                    adapter.notifyItemRangeChanged(lastIndex, item.content.size() - 1);
+                }
+            }
         });
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         binding.contentList.setLayoutManager(layoutManager);
