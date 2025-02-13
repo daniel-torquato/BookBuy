@@ -27,12 +27,13 @@ public class GetSelectedItemUseCase {
         return Transformations.switchMap(selectionRepository.selectedItemId, id ->
                 {
                     if (id >= 0) {
-                        return Transformations.map(bookRepository.items, bookItems -> {
+                        return Transformations.switchMap(bookRepository.items, bookItems -> {
                             String itemId = bookItems.get(id).id;
-                            Boolean isFavorite = favoriteRepository.isFavorite(itemId);
-                            return new SelectedBookItem(
-                                    bookItems.get(id),
-                                    isFavorite
+                            return Transformations.map(favoriteRepository.isFavorite(itemId), isFavorite ->
+                                    new SelectedBookItem(
+                                            bookItems.get(id),
+                                            isFavorite
+                                    )
                             );
                         });
                     } else {

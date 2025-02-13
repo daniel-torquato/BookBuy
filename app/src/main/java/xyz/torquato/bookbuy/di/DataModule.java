@@ -55,9 +55,10 @@ public class DataModule {
 
     @Provides
     public static FavoriteRepository providesFavoriteRepository(
-            FavoritesDao favoritesDao
+            FavoritesDao favoritesDao,
+            IOExecutor executor
     ) {
-        return new FavoriteRepository(favoritesDao);
+        return new FavoriteRepository(favoritesDao, executor);
     }
 
 
