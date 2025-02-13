@@ -27,8 +27,8 @@ public class GetSelectedItemUseCase {
     public LiveData<SelectedBookItem> __invoke__() {
         return Transformations.switchMap(selectionRepository.selectedItemId, id ->
                 {
-                    if (id >= 0) {
-                        return Transformations.switchMap(bookRepository.items, bookItems -> {
+                    return Transformations.switchMap(bookRepository.items, bookItems -> {
+                        if (id >= 0 && id <= bookItems.size()) {
                             String itemId = bookItems.get(id).id;
                             return Transformations.map(favoriteRepository.isFavorite(itemId), isFavorite ->
                                     new SelectedBookItem(
@@ -36,10 +36,10 @@ public class GetSelectedItemUseCase {
                                             isFavorite
                                     )
                             );
-                        });
-                    } else {
-                        return new MutableLiveData<>();
-                    }
+                        } else {
+                            return new MutableLiveData<>();
+                        }
+                    });
                 }
         );
     }
