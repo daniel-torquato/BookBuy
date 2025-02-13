@@ -21,6 +21,8 @@ import xyz.torquato.bookbuy.data.favorites.FavoritesDao;
 import xyz.torquato.bookbuy.data.favorites.FavoritesDatabase;
 import xyz.torquato.bookbuy.data.selection.SelectionRepository;
 import xyz.torquato.bookbuy.domain.content.GetContentUseCase;
+import xyz.torquato.bookbuy.domain.favorites.GetFavoriteFilterUseCase;
+import xyz.torquato.bookbuy.domain.favorites.SetFavoriteFilterUseCase;
 import xyz.torquato.bookbuy.domain.selection.GetSelectedItemUseCase;
 import xyz.torquato.bookbuy.domain.favorites.PerformFavoriteUseCase;
 import xyz.torquato.bookbuy.domain.search.SetQueryUseCase;
@@ -53,6 +55,7 @@ public class DataModule {
         return favoritesDatabase.favoritesDao();
     }
 
+    @Singleton
     @Provides
     public static FavoriteRepository providesFavoriteRepository(
             FavoritesDao favoritesDao,
@@ -78,9 +81,17 @@ public class DataModule {
 
     @Provides
     public static GetContentUseCase provideGetContentUseCase(
-            BookRepository bookRepository
+            BookRepository bookRepository,
+            FavoriteRepository favoriteRepository
     ) {
-        return new GetContentUseCase(bookRepository);
+        return new GetContentUseCase(bookRepository, favoriteRepository);
+    }
+
+    @Provides
+    public static GetFavoriteFilterUseCase providesGetFavoriteFilterUseCase(
+            FavoriteRepository favoriteRepository
+    ) {
+        return new GetFavoriteFilterUseCase(favoriteRepository);
     }
 
     @Provides
@@ -95,6 +106,13 @@ public class DataModule {
             SelectionRepository selectionRepository
     ) {
         return new SetSelectedItemIdUseCase(selectionRepository);
+    }
+
+    @Provides
+    public static SetFavoriteFilterUseCase providesSetFavoriteFilterUseCase(
+            FavoriteRepository favoriteRepository
+    ) {
+        return new SetFavoriteFilterUseCase(favoriteRepository);
     }
 
     @Provides
@@ -117,9 +135,17 @@ public class DataModule {
     public static BookMenuViewModel provideBookMenuViewModel(
             GetContentUseCase getContentUseCase,
             SetQueryUseCase setQueryUseCase,
-            SetSelectedItemIdUseCase setSelectedItemIdUseCase
+            SetSelectedItemIdUseCase setSelectedItemIdUseCase,
+            SetFavoriteFilterUseCase setFavoriteFilterUseCase,
+            GetFavoriteFilterUseCase getFavoriteFilterUseCase
     ) {
-        return new BookMenuViewModel(getContentUseCase, setQueryUseCase, setSelectedItemIdUseCase);
+        return new BookMenuViewModel(
+                getContentUseCase,
+                setQueryUseCase,
+                setSelectedItemIdUseCase,
+                setFavoriteFilterUseCase,
+                getFavoriteFilterUseCase
+        );
     }
 
     @Provides

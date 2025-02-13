@@ -29,7 +29,7 @@
                     android:inputType="textCapSentences|textAutoCorrect"
                     tools:ignore="LabelFor" />
                 <CheckBox
-                    android:id="@+id/favorite"
+                    android:id="@+id/favoriteFilter"
                     android:button="@android:drawable/btn_star"
                     android:background="@android:color/transparent"
                     android:buttonTint="@color/material_dynamic_tertiary99"

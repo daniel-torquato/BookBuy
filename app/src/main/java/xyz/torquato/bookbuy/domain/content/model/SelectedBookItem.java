@@ -8,7 +8,7 @@ public class SelectedBookItem {
 
     public Boolean isFavorite;
 
-    SelectedBookItem(
+    public SelectedBookItem(
             BookItem item,
             Boolean isFavorite
     ) {

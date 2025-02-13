@@ -53,15 +53,21 @@ public class FirstFragment extends Fragment {
         };
 
         CustomAdapter adapter = new CustomAdapter(dataSet, onClick);
-        viewModel.bookMenu.observe(getViewLifecycleOwner(), item -> {
+        viewModel.bookMenu.observeForever(item -> {
             Log.d("MyTag", "Check view input " + item.content.size());
             dataSet.clear();
             dataSet.addAll(item.content);
             adapter.notifyDataSetChanged();
         });
+        viewModel.isFiltered.observeForever(isFiltered -> {
+            binding.favoriteFilter.setChecked(isFiltered);
+        });
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         binding.contentList.setLayoutManager(layoutManager);
         binding.contentList.setAdapter(adapter);
+        binding.favoriteFilter.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            viewModel.setFavoriteFilter(isChecked);
+        });
 
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
