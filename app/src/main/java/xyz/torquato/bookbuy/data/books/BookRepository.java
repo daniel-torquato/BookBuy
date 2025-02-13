@@ -3,6 +3,7 @@ package xyz.torquato.bookbuy.data.books;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import org.json.JSONArray;
@@ -24,27 +25,42 @@ import xyz.torquato.bookbuy.domain.search.QueryData;
 public class BookRepository {
 
     private final BookDataSource dataSource;
-    public final LiveData<List<BookItem>> items;
+    public final MutableLiveData<List<BookItem>> _items = new MutableLiveData<>();
+    public final LiveData<List<BookItem>> items = _items;
     private final IOExecutor executor;
 
     @Inject
     public BookRepository(BookDataSource dataSource, IOExecutor executor) {
         this.dataSource = dataSource;
-        items = Transformations.map(dataSource.data, data -> {
+        Transformations.map(dataSource.data, data -> {
             if (data instanceof QueryResult.Valid) {
                 return toDomain(((QueryResult.Valid) data).data);
             } else if (data instanceof QueryResult.Error) {
                 return List.of(new BookItem("No Title", "No Author", "No Description"));
             }
-            return List.of();
+            return List.of(new BookItem("No Title", "No Author", "No Description"));
+        }).observeForever(newItems -> {
+            List<BookItem> currentItems =  this._items.getValue();
+            if (currentItems == null) {
+                this._items.setValue(newItems);
+            } else {
+                List<BookItem> mutableItems = new ArrayList<>(currentItems);
+                mutableItems.addAll(newItems);
+                this._items.setValue(mutableItems);
+            }
         });
         this.executor = executor;
     }
 
     public void setQuery(QueryData data) {
+        Log.d("MyTag", "New Search" + data.query + "range " + data.startIndex + " limit " + data.lastIndex);
         executor.execute(() ->
-                dataSource.Search(data.query, data.startIndex, data.maxResults)
+                dataSource.Search(data.query, data.startIndex, data.lastIndex - data.startIndex)
         );
+    }
+
+    public void clean() {
+        this._items.setValue(List.of());
     }
 
     List<BookItem> toDomain(JSONObject input) {

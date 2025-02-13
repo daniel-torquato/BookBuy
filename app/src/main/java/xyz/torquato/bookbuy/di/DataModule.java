@@ -19,13 +19,15 @@ import xyz.torquato.bookbuy.data.books.BookRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoritesDao;
 import xyz.torquato.bookbuy.data.favorites.FavoritesDatabase;
+import xyz.torquato.bookbuy.data.search.SearchRepository;
 import xyz.torquato.bookbuy.data.selection.SelectionRepository;
 import xyz.torquato.bookbuy.domain.content.GetContentUseCase;
 import xyz.torquato.bookbuy.domain.favorites.GetFavoriteFilterUseCase;
 import xyz.torquato.bookbuy.domain.favorites.SetFavoriteFilterUseCase;
+import xyz.torquato.bookbuy.domain.search.IncreaseSearchUseCase;
+import xyz.torquato.bookbuy.domain.search.NewSearchUsecase;
 import xyz.torquato.bookbuy.domain.selection.GetSelectedItemUseCase;
 import xyz.torquato.bookbuy.domain.favorites.PerformFavoriteUseCase;
-import xyz.torquato.bookbuy.domain.search.SetQueryUseCase;
 import xyz.torquato.bookbuy.domain.selection.SetSelectedItemIdUseCase;
 import xyz.torquato.bookbuy.ui.view.menu.BookMenuViewModel;
 import xyz.torquato.bookbuy.ui.view.detailed.DetailedItemViewModel;
@@ -64,13 +66,13 @@ public class DataModule {
         return new FavoriteRepository(favoritesDao, executor);
     }
 
-
     @Singleton
     @Provides
     public static BookDataSource providesBookDataSource() {
         return new BookDataSource();
     }
 
+    @Singleton
     @Provides
     public static BookRepository providesBookRepository(
             BookDataSource bookDataSource,
@@ -79,6 +81,7 @@ public class DataModule {
         return new BookRepository(bookDataSource, executor);
     }
 
+    @Singleton
     @Provides
     public static GetContentUseCase provideGetContentUseCase(
             BookRepository bookRepository,
@@ -94,11 +97,22 @@ public class DataModule {
         return new GetFavoriteFilterUseCase(favoriteRepository);
     }
 
+    @Singleton
     @Provides
-    public static SetQueryUseCase provideSetQueryUseCase(
-            BookRepository bookRepository
+    public static NewSearchUsecase provideSetQueryUseCase(
+            BookRepository bookRepository,
+            SearchRepository searchRepository
     ) {
-        return new SetQueryUseCase(bookRepository);
+        return new NewSearchUsecase(bookRepository, searchRepository);
+    }
+
+    @Singleton
+    @Provides
+    public static IncreaseSearchUseCase providesIncrementQueryUseCase(
+            BookRepository bookRepository,
+            SearchRepository searchRepository
+    ) {
+        return new IncreaseSearchUseCase(bookRepository, searchRepository);
     }
 
     @Provides
@@ -131,17 +145,20 @@ public class DataModule {
         return new PerformFavoriteUseCase(favoriteRepository);
     }
 
+    @Singleton
     @Provides
     public static BookMenuViewModel provideBookMenuViewModel(
             GetContentUseCase getContentUseCase,
-            SetQueryUseCase setQueryUseCase,
+            NewSearchUsecase newSearchUsecase,
+            IncreaseSearchUseCase increaseSearchUseCase,
             SetSelectedItemIdUseCase setSelectedItemIdUseCase,
             SetFavoriteFilterUseCase setFavoriteFilterUseCase,
             GetFavoriteFilterUseCase getFavoriteFilterUseCase
     ) {
         return new BookMenuViewModel(
                 getContentUseCase,
-                setQueryUseCase,
+                newSearchUsecase,
+                increaseSearchUseCase,
                 setSelectedItemIdUseCase,
                 setFavoriteFilterUseCase,
                 getFavoriteFilterUseCase

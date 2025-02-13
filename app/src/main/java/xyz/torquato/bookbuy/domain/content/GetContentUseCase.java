@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import xyz.torquato.bookbuy.data.books.BookRepository;
 import xyz.torquato.bookbuy.data.favorites.FavoriteRepository;
 import xyz.torquato.bookbuy.domain.model.BookItem;
 
+@Singleton
 public class GetContentUseCase {
 
     private final BookRepository bookRepository;

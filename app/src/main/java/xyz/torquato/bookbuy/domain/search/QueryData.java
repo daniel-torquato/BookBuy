@@ -6,15 +6,15 @@ public class QueryData {
 
     public int startIndex;
 
-    public int maxResults;
+    public int lastIndex;
 
     public QueryData(
             String query,
             int startIndex,
-            int maxResults
+            int lastIndex
     ) {
         this.query = query;
         this.startIndex = startIndex;
-        this.maxResults = maxResults;
+        this.lastIndex = lastIndex;
     }
 }

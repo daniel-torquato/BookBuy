@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -65,6 +66,14 @@ public class FirstFragment extends Fragment {
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         binding.contentList.setLayoutManager(layoutManager);
         binding.contentList.setAdapter(adapter);
+        binding.contentList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    viewModel.OnIncrementSearch();
+                }
+            }
+        });
         binding.favoriteFilter.setOnCheckedChangeListener((buttonView, isChecked) -> {
             viewModel.setFavoriteFilter(isChecked);
         });
@@ -72,7 +81,7 @@ public class FirstFragment extends Fragment {
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String s) {
-                viewModel.Search(s, 0, 5);
+                viewModel.onNewSearch(s);
                 return false;
             }
 
