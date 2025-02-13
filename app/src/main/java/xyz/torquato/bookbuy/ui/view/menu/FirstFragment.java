@@ -72,7 +72,7 @@ public class FirstFragment extends Fragment {
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String s) {
-                viewModel.Search(s, 0, 5);
+                viewModel.Search(s, 0, 10);
                 return false;
             }
 
